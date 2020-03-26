@@ -24,8 +24,19 @@ foreach ($obj->result as $result) {
     if ($result->message->date < time() - 5 * 60) {
         continue;
     }
+    if (property_exists($result->message->from, 'username')) {
+        $user = $result->message->from->username;
+    } elseif (property_exists($result->message->from, 'first_name')) {
+        $user = $result->message->from->first_name;
+    } else {
+        continue;
+    }
+    if (!property_exists($result->message, 'text')) {
+        continue;
+    }
+
     $ret->messages[] = array(
-        'user' => $result->message->from->username,
+        'user' => $user,
         'text' => $result->message->text,
     );
 }
